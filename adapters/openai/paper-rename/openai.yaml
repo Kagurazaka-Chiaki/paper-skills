@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Rename"
+  short_description: "Normalize noisy paper PDF filenames"
+  default_prompt: "Use $paper-rename to preview or apply paper PDF renames into `{bibkey} - {中文短标题}.pdf` using an existing bibkey and sync direct Markdown references."

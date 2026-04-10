@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Missing"
+  short_description: "Maintain missing-paper checklists"
+  default_prompt: "Use $paper-missing to refresh a paper library's missing-paper checklist, remove newly covered items, and keep the missing summary accurate."

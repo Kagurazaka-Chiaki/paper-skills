@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Reconcile"
+  short_description: "Reconcile library coverage and duplicates"
+  default_prompt: "Use $paper-reconcile to reconcile a paper library against a bibliography, maintain matched or unmatched coverage, and report duplicate-oriented status without doing per-paper identity matching or missing-checklist editing."

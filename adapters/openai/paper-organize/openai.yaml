@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Organize"
+  short_description: "Archive papers into final library paths"
+  default_prompt: "Use $paper-organize to preview or apply the final archive move for an already-keyed paper PDF, update the paper index, and sync direct note attachment references."

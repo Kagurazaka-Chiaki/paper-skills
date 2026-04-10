@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Ingest"
+  short_description: "Route papers through the ingest pipeline"
+  default_prompt: "Use $paper-ingest to inspect the current state of a paper and route it through the correct paper-management steps from matching to bibkey, rename, organize, notes, or library reconciliation."

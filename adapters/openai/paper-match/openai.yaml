@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Match"
+  short_description: "Match paper PDFs to known records"
+  default_prompt: "Use $paper-match to identify which paper a local PDF is, detect duplicates, and report whether downstream bibkey, rename, organize, or note-writing steps can proceed safely."

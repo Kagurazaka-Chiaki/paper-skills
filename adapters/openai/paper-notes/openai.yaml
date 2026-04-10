@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Notes"
+  short_description: "Create or update paper reading notes"
+  default_prompt: "Use $paper-notes to create or update a complete paper note from an identified PDF, a stable bibkey, known metadata, and a provided note path."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper BibKey"
+  short_description: "Generate stable paper BibTeX keys"
+  default_prompt: "Use $paper-bibkey to preview or apply a stable BibTeX key for a paper, update the target `.bib` entry, and sync `bibkey:` into the matching note or record."
