@@ -1,0 +1,11 @@
+.old
+.agents
+.codex
+__pycache__
+.pytest_cache
+*.pyc
+*.pyo
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
