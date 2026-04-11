@@ -1,6 +1,6 @@
 # paper-skills
 
-English version: [README.en.md](README.en.md)
+[中文](./README.md) | [English](./README.en.md)
 
 `paper-skills` 是一个面向论文管理工作流的通用 skill 源仓库。
 
@@ -23,6 +23,7 @@ paper-skills/
     paper-notes/
     paper-missing/
     paper-reconcile/
+    paper-index/
   docs/
     conventions.md
     portability.md
@@ -40,6 +41,7 @@ paper-skills/
 - `paper-notes`：创建或更新结构化论文笔记
 - `paper-missing`：维护 missing-paper 清单
 - `paper-reconcile`：维护库级覆盖状态和重复状态
+- `paper-index`：维护轻量级 `papers.bib` 与 `papers.sqlite` 索引
 
 ## 设计原则
 

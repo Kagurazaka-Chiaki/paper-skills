@@ -144,6 +144,7 @@ Think in terms of ingestion stages:
 - If the paper identity is uncertain, never skip directly to bibkey, rename, organize, or note-writing.
 - If the bibkey is unstable, do not organize or finalize the note around it first.
 - If the filename is already stable and acceptable, do not rename it just for neatness.
+- If the workspace keeps paper notes coupled to attachment basenames, treat note-file renaming as part of the filename-normalization stage rather than as a separate note-writing stage.
 - If the archive location is already correct, do not move it again.
 - If the note already exists and is strong, update it only when the user asked for enrichment.
 

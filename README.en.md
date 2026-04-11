@@ -21,6 +21,7 @@ paper-skills/
     paper-notes/
     paper-missing/
     paper-reconcile/
+    paper-index/
   docs/
     conventions.md
     portability.md
@@ -38,6 +39,7 @@ paper-skills/
 - `paper-notes`: create or update structured paper notes
 - `paper-missing`: maintain missing-paper checklists
 - `paper-reconcile`: reconcile library-wide coverage and duplicate state
+- `paper-index`: maintain lightweight `papers.bib` and `papers.sqlite` indexes
 
 ## Principles
 

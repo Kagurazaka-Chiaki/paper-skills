@@ -20,6 +20,7 @@ Normalize noisy paper PDF filenames after paper identity and bibkey are already 
 ## Writes
 
 - renamed PDF path
+- optional renamed note path when a coupled paper note already exists
 - optional updated path references in user-managed records when the workflow explicitly includes them
 - optional `bibkey:` and `short_title_zh:` metadata updates in related notes or records
 
@@ -35,9 +36,11 @@ Normalize noisy paper PDF filenames after paper identity and bibkey are already 
 - use `{bibkey} - {short_title}.pdf`
 - keep `bibkey` unchanged and ASCII-only
 - treat `short_title` as display text rather than an internal key
+- keep readable spacing at Chinese-English boundaries inside `short_title`, for example `Transformer 原论文` instead of `Transformer原论文`
 - strip illegal filename characters and trailing dots or spaces
 - preview the target name before executing the rename
 - stop on path conflicts instead of inventing fallback names automatically
+- when a corresponding paper note already exists, rename the note file to the same basename as the target PDF unless the workspace clearly uses a different stable convention
 - sync direct references after a confirmed rename
 
 ## Non-Goals
@@ -46,7 +49,6 @@ Normalize noisy paper PDF filenames after paper identity and bibkey are already 
 - deciding the final archive directory
 - writing note bodies
 - using `.bib` as workflow state
-- renaming paper-note Markdown filenames
 
 ## Output Contract
 
@@ -56,6 +58,7 @@ Report at least:
 - resolved bibkey
 - resolved short title
 - target filename
+- target note filename when a coupled note exists
 - conflict status
 - whether the rename is safe to execute
 
@@ -107,6 +110,7 @@ Do not:
    Prefer an existing note or metadata record's `short_title_zh:` value when present.
    Otherwise derive a concise Chinese short title from the paper's problem, method, or distinguishing phrase.
    Keep it informative but compact, usually 8 to 14 Chinese characters.
+   Insert a space when Chinese and English tokens meet directly and the combined phrase remains readable, for example `Transformer 原论文`, `KV Cache 量化`, or `RoPE 位置编码`.
    Compress aggressively when needed instead of transliterating the full English title.
 
 5. Sanitize the target filename.
@@ -130,10 +134,13 @@ Do not:
    If a corresponding note or metadata record exists, store or update:
    - `bibkey: ...`
    - `short_title_zh: ...`
+   When the workspace keeps paper notes coupled to paper attachments, rename the note file to the same basename as the renamed PDF:
+   - `{bibkey} - {short_title}.md`
    Update direct references that point to the renamed PDF, at minimum:
    - note frontmatter `source:`
    - explicit file links inside related notes
    - explicit links in local index pages or catalogs when they exist
+   Update links that point to the renamed note file when note renaming is part of the workflow.
 
 ## Matching Rules
 
@@ -149,6 +156,7 @@ Do not:
 - Keep only the phrase that best distinguishes the paper in the current library.
 - Avoid filler words such as “一种方法”, “研究”, “论文”, or “基于” unless they are essential for disambiguation.
 - Avoid illegal filename characters and punctuation that adds length without meaning.
+- Prefer visible spacing across Chinese-English token boundaries when it improves readability.
 - When two candidate short titles are similarly good, prefer the shorter one.
 
 ## Output Discipline
@@ -157,6 +165,7 @@ Do not:
 - Keep `bibkey` ASCII-only and stable across reruns.
 - Treat `short_title_zh` as display metadata rather than an internal key.
 - Keep metadata and direct references synchronized after a confirmed rename.
+- When a note is already coupled to the paper, prefer keeping the note basename synchronized with the current PDF basename.
 - If the main task is identifying which paper a PDF is, use `$paper-match` first.
 - If the bibkey is missing, noisy, or needs replacement, use `$paper-bibkey` first.
 - If the main task is deciding the final archive location and moving the paper into the library, use `$paper-organize`.

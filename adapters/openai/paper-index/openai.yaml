@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Index"
+  short_description: "Maintain BibTeX and SQLite paper indexes"
+  default_prompt: "Use $paper-index to run the bundled Python sync script and refresh `papers.bib` plus `papers.sqlite` for already-identified papers with stable bibkeys, note paths, and PDF paths."

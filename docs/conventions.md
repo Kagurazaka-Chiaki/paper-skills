@@ -58,3 +58,4 @@
 - `paper-notes`：创建或更新论文笔记
 - `paper-missing`：维护 missing-paper 清单
 - `paper-reconcile`：维护集合级覆盖状态与重复状态
+- `paper-index`：维护仓库级 `papers.bib` 与 `papers.sqlite` 简单索引
