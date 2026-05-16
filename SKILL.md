@@ -17,10 +17,12 @@ Only dispatch to these internal files:
 
 - `skills/paper-match/SKILL.md`
 - `skills/paper-bibkey/SKILL.md`
+- `skills/paper-bib-clean/SKILL.md`
 - `skills/paper-rename/SKILL.md`
 - `skills/paper-organize/SKILL.md`
 - `skills/paper-ingest/SKILL.md`
 - `skills/paper-notes/SKILL.md`
+- `skills/paper-deep-read/SKILL.md`
 - `skills/paper-missing/SKILL.md`
 - `skills/paper-reconcile/SKILL.md`
 - `skills/paper-index/SKILL.md`
@@ -45,13 +47,19 @@ Use:
 
 - `skills/paper-match/SKILL.md` for paper identity resolution or duplicate detection
 - `skills/paper-bibkey/SKILL.md` for generating or repairing a bibkey
+- `skills/paper-bib-clean/SKILL.md` for cleaning existing BibTeX files for Zotero import without changing citation keys, PDFs, or Zotero databases
 - `skills/paper-rename/SKILL.md` for PDF filename normalization
 - `skills/paper-organize/SKILL.md` for archive placement and reference sync
 - `skills/paper-ingest/SKILL.md` for orchestration across multiple stages
 - `skills/paper-notes/SKILL.md` for writing or updating a paper note
+- `skills/paper-deep-read/SKILL.md` for close-reading an identified paper and appending or updating `## 精读记录`
 - `skills/paper-missing/SKILL.md` for missing-paper checklist maintenance
 - `skills/paper-reconcile/SKILL.md` for collection-level bibliography reconciliation
-- `skills/paper-index/SKILL.md` for maintaining `papers.bib` and `papers.sqlite`
+- `skills/paper-index/SKILL.md` for maintaining repository-local minimal `.bib` files, `papers.sqlite`, and `resources.sqlite`
+
+Route requests for `精读`, close reading, deep reading, research-use reading, reproduction-oriented understanding, or skeptical technical review to `skills/paper-deep-read/SKILL.md`. Keep ordinary note creation or lightweight note completion routed to `skills/paper-notes/SKILL.md`.
+
+Route requests to clean `.bib` files, repair malformed author fields, convert comma-separated author lists to `and`, add Zotero `file` fields, or make BibTeX import cleanly into Zotero to `skills/paper-bib-clean/SKILL.md`. Do not route these cleanup-only requests to `paper-bibkey` unless the user wants keys generated or changed.
 
 ## Required Behavior
 

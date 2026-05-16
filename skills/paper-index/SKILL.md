@@ -1,34 +1,35 @@
 ---
 name: paper-index
-description: Maintain a simple repository-level paper database using a BibTeX file and a SQLite catalog, syncing stable bibkeys, note paths, PDF paths, and minimal metadata for already-identified papers. Use when Codex needs to initialize, refresh, repair, or append a lightweight paper index after bibkey, rename, organize, or note updates.
+description: Maintain lightweight repository resource indexes using minimal BibTeX files and SQLite catalogs, syncing stable keys, note paths, Zotero links, and minimal metadata for already-identified papers, books, and reference notes. Use when Codex needs to initialize, refresh, repair, or append repository-local minimal `.bib`, `papers.sqlite`, or `resources.sqlite` indexes after bibkey, rename, organize, or note updates.
 ---
 
 # Paper Index
 
 ## Purpose
 
-Maintain a lightweight repository-level paper database using a BibTeX file and a SQLite catalog.
+Maintain lightweight repository-level resource databases using minimal BibTeX files and SQLite catalogs.
 
-Use this skill after paper identity is already known and a stable `bibkey` exists or is being finalized.
+Use this skill after resource identity is already known and a stable key exists or is being finalized.
 
 ## Reads
 
-- existing paper notes or metadata records
-- existing attachment paths
+- existing resource notes or metadata records
 - optional existing `papers.bib`
 - optional existing `papers.sqlite`
+- optional existing `resources.sqlite`
 - stable identifiers such as `bibkey`, title, year, DOI, and note path
 
 ## Writes
 
 - created or updated `papers.bib`
 - created or updated `papers.sqlite`
+- created or updated `resources.sqlite`
 - optional `bibkey:` sync into existing notes when the workflow explicitly includes it
 
 ## Source Of Truth
 
 - stable `bibkey`
-- current note and PDF paths
+- current note paths and Zotero links
 - note frontmatter metadata when present
 - existing index files when already established
 - the Python sync script under `scripts/`
@@ -36,15 +37,17 @@ Use this skill after paper identity is already known and a stable `bibkey` exist
 ## Required Behavior
 
 - call the Python sync script instead of manually rebuilding the database in prose
-- keep `papers.bib` human-readable and keep `papers.sqlite` lightweight
-- treat `papers.bib` and `papers.sqlite` as repository indexes, not as full bibliographic warehouses
+- keep repository `.bib` files human-readable and keep SQLite catalogs lightweight
+- treat repository `.bib`, `papers.sqlite`, and `resources.sqlite` as repository indexes, not as full bibliographic warehouses
 - use the stable `bibkey` as the primary key in `papers.sqlite`
+- use the stable resource key as the primary key in `resources.sqlite`
 - preserve the existing readable `short_title_zh` spacing convention, including spaces at Chinese-English boundaries when present
 - preserve existing entries unless the current paper record clearly supersedes them
 - update paths and core metadata conservatively instead of rewriting unrelated entries
 - stop and report collisions when two different papers appear to claim the same `bibkey`
 - prefer recoverable metadata over guessed metadata
-- keep `papers.bib` temporarily free of `file` and `x_note` fields
+- keep repository `papers.bib` free of `pdf`, `file`, and `x_note` attachment fields
+- treat configured external bibliography files as Zotero import sources when attachment paths are needed
 
 ## Non-Goals
 
@@ -62,31 +65,34 @@ Report at least:
 - target bibkey or batch scope
 - whether `papers.bib` changed
 - whether `papers.sqlite` changed
+- whether `resources.sqlite` changed
 - which paths or metadata fields were added or updated
 - any collisions or ambiguous records that blocked the update
 
 ## Workflow
 
 1. Inspect the current local paper state.
-   Confirm the paper identity, stable `bibkey`, note path, and PDF path.
+   Confirm the paper identity, stable `bibkey`, note path, and Zotero key/link.
 
 2. Inspect the current indexes.
-   Read `papers.bib` and `papers.sqlite` when they exist.
+   Read repository `.bib` files, `papers.sqlite`, and `resources.sqlite` when they exist.
    Preserve the existing shape instead of redesigning the index on each run.
 
 3. Run the Python sync script.
    Use:
-   - `python scripts/sync_index.py --workspace-root <workspace-root>`
+   - `python scripts/sync_index.py --workspace-root <workspace-root> --config <workspace-root>/.paper-skills.json`
+   - or `python scripts/sync_index.py --workspace-root <workspace-root>` when discoverable filenames are unique
    - optionally narrow the run to one note or one `bibkey` when the task is intentionally scoped
 
 4. Update `papers.bib`.
    Create or update one entry for the paper using the closest confident BibTeX type.
    Keep fields minimal and avoid speculative bibliography cleanup.
-   Do not include `file` or `x_note` fields in the current repository convention.
+   Do not include `pdf`, `file`, or `x_note` fields in the current repository convention.
 
-5. Update `papers.sqlite`.
+5. Update `papers.sqlite` and `resources.sqlite`.
    Create or upsert one row per paper keyed by the same `bibkey`.
-   Keep the schema flat and explicit so it remains easy to inspect with standard SQLite tools.
+   Create or upsert one row per resource in `resources.sqlite`.
+   Keep schemas flat and explicit so they remain easy to inspect with standard SQLite tools.
 
 6. Sync note metadata only when needed.
    If the note lacks `bibkey:` or another directly related stable field, write the missing value.
@@ -94,14 +100,44 @@ Report at least:
 
 ## Default Index Shape
 
-Use simple repository-level paths when the workspace does not already define others:
+Use project configuration when available. A downstream workspace may provide `.paper-skills.json` at its root:
 
-- `07-Resources/Papers/papers.bib`
-- `07-Resources/Papers/papers.sqlite`
+```json
+{
+  "paper_notes_dir": "<relative-or-absolute-paper-note-dir>",
+  "resource_bibs": {
+    "paper": "<relative-or-absolute-papers.bib>",
+    "book": "<relative-or-absolute-books.bib>",
+    "reference-note": "<relative-or-absolute-reference-notes.bib>"
+  },
+  "paper_sqlite": "<relative-or-absolute-papers.sqlite>",
+  "resource_sqlite": "<relative-or-absolute-resources.sqlite>",
+  "external_library_bib": "<relative-or-absolute-zotero-import-bib>",
+  "external_pdf_roots": {
+    "paper": "<relative-or-absolute-paper-pdf-root>",
+    "book": "<relative-or-absolute-book-pdf-root>",
+    "reference-note": "<relative-or-absolute-reference-note-pdf-root>"
+  }
+}
+```
+
+When no config is supplied, the script only uses discoverable filenames:
+
+- `papers.bib`
+- `books.bib`
+- `reference-notes.bib`
+- `papers.sqlite`
+- `resources.sqlite`
+
+If multiple candidates exist, stop and ask the user to provide `--config` or explicit CLI paths.
 
 For `papers.sqlite`, prefer one main table:
 
-- `papers(bibkey TEXT PRIMARY KEY, title TEXT, author TEXT, year INTEGER, venue TEXT, doi TEXT, area TEXT, status TEXT, note_path TEXT, pdf_path TEXT, short_title_zh TEXT, tags_json TEXT, updated_at TEXT)`
+- `papers(bibkey TEXT PRIMARY KEY, title TEXT, author TEXT, year INTEGER, venue TEXT, doi TEXT, area TEXT, status TEXT, note_path TEXT, pdf_path TEXT, zotero_key TEXT, zotero_select TEXT, short_title_zh TEXT, tags_json TEXT, updated_at TEXT)`
+
+For `resources.sqlite`, prefer one main table:
+
+- `resources(key TEXT PRIMARY KEY, kind TEXT, title TEXT, author TEXT, year INTEGER, doi TEXT, keywords TEXT, note_path TEXT, zotero_select TEXT, bib_path TEXT, updated_at TEXT)`
 
 ## Script
 
@@ -111,10 +147,12 @@ Use the bundled script:
 
 It should:
 
-- scan `07-Resources/Papers/*.md`
+- scan the configured paper note directory when one exists
+- read configured minimal `.bib` files, or uniquely discovered `papers.bib`, `books.bib`, and `reference-notes.bib`
 - parse frontmatter conservatively
 - ignore non-paper notes such as `README.md`
-- upsert rows into `papers.sqlite`
+- upsert rows into the configured or discovered `papers.sqlite`
+- upsert rows into the configured or discovered `resources.sqlite`
 - rewrite `papers.bib` from the same stable record set
 
 ## Output Discipline

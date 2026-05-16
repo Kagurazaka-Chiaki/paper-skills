@@ -177,7 +177,7 @@ Do not:
 
 Prefer fast local inspection:
 
-- List PDFs: `Get-ChildItem <paper-dir> -Filter *.pdf`
+- List PDFs with the local file-search tool available in the current runtime.
 - Search BibTeX keys: `rg -n "^@(article|inproceedings|misc)\\{" <bibfile>`
 - Read PDF metadata: `pdfinfo <file.pdf>`
 - Extract first page text: `pdftotext -f 1 -l 1 -nopgbrk -layout <file.pdf> -`

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Deep Read"
+  short_description: "Close-read an identified paper"
+  default_prompt: "Use $paper-deep-read to append or update a rigorous deep-reading section for an identified paper, covering problem framing, method reconstruction, claim/evidence/caveat analysis, experiments, limitations, implementation risks, and knowledge links."

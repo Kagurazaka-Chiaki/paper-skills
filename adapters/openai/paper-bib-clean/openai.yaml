@@ -1,0 +1,4 @@
+interface:
+  display_name: "Paper Bib Clean"
+  short_description: "Clean BibTeX for Zotero import"
+  default_prompt: "Use $paper-bib-clean to repair a configured external library BibTeX file or another existing BibTeX file for Zotero import while preserving citation keys and entries, fixing author separators, normalizing author names, and adding local PDF attachment fields without touching PDFs or Zotero databases."

@@ -152,7 +152,7 @@ Do not force optional sections when they would only produce filler.
 
 Prefer fast local inspection:
 
-- Read the note: `Get-Content <note.md>`
+- Read the note with the local file-reading tool available in the current runtime.
 - Read PDF metadata: `pdfinfo <file.pdf>`
 - Extract the first pages: `pdftotext -f 1 -l 3 -nopgbrk -layout <file.pdf> -`
 - Search local note fields: `rg -n "^title:|^source:|^bibkey:|^author:|^year:" <workspace-root>`

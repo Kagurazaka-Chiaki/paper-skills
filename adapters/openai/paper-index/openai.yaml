@@ -1,4 +1,4 @@
 interface:
   display_name: "Paper Index"
-  short_description: "Maintain BibTeX and SQLite paper indexes"
-  default_prompt: "Use $paper-index to run the bundled Python sync script and refresh `papers.bib` plus `papers.sqlite` for already-identified papers with stable bibkeys, note paths, and PDF paths."
+  short_description: "Maintain lightweight resource indexes"
+  default_prompt: "Use $paper-index to run the bundled Python sync script and refresh the repository's minimal `.bib` files, `papers.sqlite`, and `resources.sqlite` for already-identified resources with stable keys, note paths, and Zotero links. Do not write PDF attachment paths into repository indexes."
