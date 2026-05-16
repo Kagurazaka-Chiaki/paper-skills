@@ -82,16 +82,25 @@ Report at least:
    Use:
    - `python scripts/sync_index.py --workspace-root <workspace-root> --config <workspace-root>/.paper-skills.json`
    - or `python scripts/sync_index.py --workspace-root <workspace-root>` when discoverable filenames are unique
-   - optionally narrow the run to one note or one `bibkey` when the task is intentionally scoped
+   - add `--dry-run` before writing when validating a batch or checking the sync plan
+   - add `--prune-stale` only when stale SQLite rows should be deleted explicitly
 
 4. Update `papers.bib`.
    Create or update one entry for the paper using the closest confident BibTeX type.
+   Merge note-derived records into the existing file instead of replacing entries wholesale.
+   Preserve existing entries that do not yet have paper notes.
    Keep fields minimal and avoid speculative bibliography cleanup.
+   Write Zotero-importable classification tags through the BibTeX `keywords` field.
+   Prefer `area` as the first keyword, then append note `tags`, excluding generic `paper`.
    Do not include `pdf`, `file`, or `x_note` fields in the current repository convention.
+   When `external_library_bib` is configured, update matching entries' `keywords` there too.
+   Preserve external attachment fields such as `pdf` and do not rewrite unrelated metadata.
 
 5. Update `papers.sqlite` and `resources.sqlite`.
    Create or upsert one row per paper keyed by the same `bibkey`.
    Create or upsert one row per resource in `resources.sqlite`.
+   Preserve existing `deep_read_status` values in `resources.sqlite`.
+   Do not delete stale SQLite rows unless `--prune-stale` is passed.
    Keep schemas flat and explicit so they remain easy to inspect with standard SQLite tools.
 
 6. Sync note metadata only when needed.
@@ -137,7 +146,7 @@ For `papers.sqlite`, prefer one main table:
 
 For `resources.sqlite`, prefer one main table:
 
-- `resources(key TEXT PRIMARY KEY, kind TEXT, title TEXT, author TEXT, year INTEGER, doi TEXT, keywords TEXT, note_path TEXT, zotero_select TEXT, bib_path TEXT, updated_at TEXT)`
+- `resources(key TEXT PRIMARY KEY, kind TEXT, title TEXT, author TEXT, year INTEGER, doi TEXT, keywords TEXT, note_path TEXT, zotero_select TEXT, bib_path TEXT, updated_at TEXT, deep_read_status TEXT)`
 
 ## Script
 
@@ -153,7 +162,27 @@ It should:
 - ignore non-paper notes such as `README.md`
 - upsert rows into the configured or discovered `papers.sqlite`
 - upsert rows into the configured or discovered `resources.sqlite`
-- rewrite `papers.bib` from the same stable record set
+- merge paper-note records into `papers.bib` while preserving existing entries without notes
+- support `--dry-run` for a non-mutating plan and `--prune-stale` for explicit SQLite stale-row deletion
+- update configured external Zotero-import BibTeX `keywords` while preserving PDF attachments
+
+## Zotero Collection Sync
+
+For Zotero-side collection maintenance, use:
+
+- `D:/KnowledgeLibrary/zotero-ops/sync-tags-to-collections.js`
+
+Run it through Zotero `Tools -> Developer -> Run JavaScript`.
+Check the option to run the script as an async function.
+First run with `DRY_RUN = true`, review the summary, then set `DRY_RUN = false` and run once more.
+It should:
+
+- scan local user library regular items with path-like classification tags
+- use path-like item tags such as `Graphics/Rendering-Pipeline`
+- create or reuse top-level collection paths such as `Graphics > Rendering-Pipeline`
+- add items incrementally without removing them from existing collections
+- avoid deleting, trashing, or removing existing Zotero collection membership
+- keep expensive duplicate / insufficient-import checks disabled by default with `CHECK_IMPORT_PROBLEMS = false`
 
 ## Output Discipline
 
